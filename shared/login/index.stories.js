@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react'
 import Login, {type Props} from './login'
-import {action, storiesOf} from '../stories/storybook'
+import {action, storiesOf, withKnobs, addDecorator} from '../stories/storybook'
+import {text} from '@storybook/addon-knobs/react'
 
 const commonProps: Props = {
   users: ['awendland'],
@@ -26,6 +27,7 @@ const commonProps: Props = {
 
 const load = () => {
   storiesOf('Login', module)
+    .addDecorator(withKnobs)
     .add('Single previous user', () => <Login {...commonProps} />)
     .add('Error', () => <Login {...commonProps} error="Oh, no! What a mess!" />)
     .add('Multiple previous users', () => (

@@ -157,28 +157,6 @@ func testUserHasDeviceKey(tc libkb.TestContext) {
 	}
 }
 
-func TestUserInfo(t *testing.T) {
-	t.Skip()
-	tc := SetupEngineTest(t, "login")
-	defer tc.Cleanup()
-
-	u := CreateAndSignupFakeUser(tc, "login")
-	var username libkb.NormalizedUsername
-	var err error
-	aerr := tc.G.LoginState().Account(func(a *libkb.Account) {
-		_, username, _, _, _, err = a.UserInfo()
-	}, "TestUserInfo")
-	if aerr != nil {
-		t.Fatal(err)
-	}
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !username.Eq(libkb.NewNormalizedUsername(u.Username)) {
-		t.Errorf("userinfo username: %q, expected %q", username, u.Username)
-	}
-}
-
 func TestUserEmails(t *testing.T) {
 	tc := SetupEngineTest(t, "login")
 	defer tc.Cleanup()

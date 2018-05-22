@@ -25,19 +25,17 @@ const setUnsentText = (conversationIDKey: Types.ConversationIDKey, text: string)
 }
 
 const mapStateToProps = (state: TypedState, {conversationIDKey}) => {
-  const editingOrdinal = Constants.getEditingOrdinal(state, conversationIDKey)
-  const _editingMessage: ?Types.Message = editingOrdinal
-    ? Constants.getMessageMap(state, conversationIDKey).get(editingOrdinal)
+  const editingState = Constants.getEditingState(state, conversationIDKey)
+  const _editingMessage: ?Types.Message = editingState
+    ? Constants.getMessageMap(state, conversationIDKey).get(editingState.ordinal)
     : null
-  const quote = Constants.getQuotingOrdinalAndSource(
+  const quotingState = Constants.getQuotingState(
     state,
     state.chat2.pendingSelected ? Constants.pendingConversationIDKey : conversationIDKey
   )
-  let _quotingMessage: ?Types.Message = null
-  if (quote) {
-    const {ordinal, sourceConversationIDKey} = quote
-    _quotingMessage = ordinal ? Constants.getMessageMap(state, sourceConversationIDKey).get(ordinal) : null
-  }
+  let _quotingMessage: ?Types.Message = quotingState
+    ? Constants.getMessageMap(state, quotingState.sourceConversationIDKey).get(quotingState.ordinal)
+    : null
 
   // Sanity check -- is this quoted-pending message for the right person?
   if (
@@ -64,8 +62,10 @@ const mapStateToProps = (state: TypedState, {conversationIDKey}) => {
       : ''
 
   return {
+    _editingCounter: editingState ? editingState.counter : 0,
     _editingMessage,
     _meta: Constants.getMeta(state, conversationIDKey),
+    _quotingCounter: quotingState ? quotingState.counter : 0,
     _quotingMessage,
     _you,
     conversationIDKey,
@@ -143,8 +143,10 @@ const mergeProps = (stateProps, dispatchProps, ownProps: OwnProps): Props => ({
   pendingWaiting: stateProps.pendingWaiting,
   typing: stateProps.typing,
 
-  _quotingMessage: stateProps._quotingMessage,
+  _editingCounter: stateProps._editingCounter,
   _editingMessage: stateProps._editingMessage,
+  _quotingCounter: stateProps._quotingCounter,
+  _quotingMessage: stateProps._quotingMessage,
   injectedInput: stateProps.injectedInput,
 
   getUnsentText: () => getUnsentText(stateProps.conversationIDKey),

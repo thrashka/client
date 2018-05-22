@@ -65,7 +65,7 @@ export const getQuoteInfo = (state: TypedState, id: Types.ConversationIDKey) => 
     return null
   }
 
-  const message = getMessageMap(state, id).get(quote.ordinal)
+  const message = getMessageMap(state, quote.sourceConversationIDKey).get(quote.ordinal)
   if (!message || message.type !== 'text') {
     return null
   }
@@ -73,7 +73,6 @@ export const getQuoteInfo = (state: TypedState, id: Types.ConversationIDKey) => 
   // Sanity check -- is this quoted-pending message for the right person?
   if (
     state.chat2.pendingSelected &&
-    message &&
     !isEqual([message.author], state.chat2.pendingConversationUsers.toArray())
   ) {
     logger.warn('Should never happen:', state.chat2.pendingConversationUsers.toArray(), 'vs', message.author)

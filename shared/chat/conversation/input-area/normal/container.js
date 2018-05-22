@@ -5,7 +5,6 @@ import * as Chat2Gen from '../../../../actions/chat2-gen'
 import * as RouteTree from '../../../../actions/route-tree'
 import HiddenString from '../../../../util/hidden-string'
 import {connect, type TypedState, type Dispatch} from '../../../../util/container'
-import {isEqual} from 'lodash-es'
 import Input, {type Props} from '.'
 
 type OwnProps = {
@@ -26,47 +25,19 @@ const setUnsentText = (conversationIDKey: Types.ConversationIDKey, text: string)
 
 const mapStateToProps = (state: TypedState, {conversationIDKey}) => {
   const editInfo = Constants.getEditInfo(state, conversationIDKey)
-  const quotingState = Constants.getQuotingState(state)
-  let _quotingMessage: ?Types.Message = quotingState
-    ? Constants.getMessageMap(state, quotingState.sourceConversationIDKey).get(quotingState.ordinal)
-    : null
-
-  // Sanity check -- is this quoted-pending message for the right person?
-  if (
-    state.chat2.pendingSelected &&
-    _quotingMessage &&
-    !isEqual([_quotingMessage.author], state.chat2.pendingConversationUsers.toArray())
-  ) {
-    console.warn(
-      'Should never happen:',
-      state.chat2.pendingConversationUsers.toArray(),
-      'vs',
-      _quotingMessage.author
-    )
-    _quotingMessage = null
-  }
-
-  const _quoteTarget = quotingState ? quotingState.targetConversationIDKey : null
+  const quoteInfo = Constants.getQuoteInfo(state, conversationIDKey)
 
   const _you = state.config.username || ''
   const pendingWaiting = state.chat2.pendingSelected && state.chat2.pendingStatus === 'waiting'
-
-  const injectedInputMessage: ?Types.Message = _quotingMessage || null
-  const injectedInput: string =
-    injectedInputMessage && injectedInputMessage.type === 'text'
-      ? injectedInputMessage.text.stringValue()
-      : ''
 
   return {
     _editText: editInfo ? editInfo.text : '',
     _editOrdinal: editInfo ? editInfo.ordinal : null,
     _meta: Constants.getMeta(state, conversationIDKey),
-    _quotingCounter: quotingState ? quotingState.counter : 0,
-    _quotingMessage,
-    _quoteTarget,
+    _quoteCounter: quoteInfo ? quoteInfo.counter : 0,
+    _quoteText: quoteInfo ? quoteInfo.text : '',
     _you,
     conversationIDKey,
-    injectedInput,
     pendingWaiting,
     typing: Constants.getTyping(state, conversationIDKey),
   }
@@ -124,10 +95,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps: OwnProps): Props => ({
   typing: stateProps.typing,
 
   _editText: stateProps._editText,
-  _quotingCounter: stateProps._quotingCounter,
-  _quotingMessage: stateProps._quotingMessage,
-  _quoteTarget: stateProps._quoteTarget,
-  injectedInput: stateProps.injectedInput,
+  _quoteCounter: stateProps._quoteCounter,
+  _quoteText: stateProps._quoteText,
 
   getUnsentText: () => getUnsentText(stateProps.conversationIDKey),
   setUnsentText: (text: string) => setUnsentText(stateProps.conversationIDKey, text),

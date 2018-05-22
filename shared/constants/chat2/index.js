@@ -46,6 +46,7 @@ export const getHasBadge = (state: TypedState, id: Types.ConversationIDKey) =>
 export const getHasUnread = (state: TypedState, id: Types.ConversationIDKey) =>
   state.chat2.unreadMap.get(id, 0) > 0
 export const getSelectedConversation = (state: TypedState) => state.chat2.selectedConversation
+
 export const getEditInfo = (state: TypedState, id: Types.ConversationIDKey) => {
   const ordinal = state.chat2.editingMap.get(id)
   if (!ordinal) {
@@ -59,8 +60,10 @@ export const getEditInfo = (state: TypedState, id: Types.ConversationIDKey) => {
 
   return {text: message.text.stringValue(), ordinal}
 }
+
 export const getQuoteInfo = (state: TypedState, id: Types.ConversationIDKey) => {
   const quote = state.chat2.quote
+  // Return null if we're not on the target conversation.
   if (!quote || quote.targetConversationIDKey !== id) {
     return null
   }
@@ -80,6 +83,7 @@ export const getQuoteInfo = (state: TypedState, id: Types.ConversationIDKey) => 
   }
   return {counter: quote.counter, text: formatTextForQuoting(message.text.stringValue())}
 }
+
 export const getTyping = (state: TypedState, id: Types.ConversationIDKey) =>
   state.chat2.typingMap.get(id, I.Set())
 export const generateOutboxID = () => Buffer.from([...Array(8)].map(() => Math.floor(Math.random() * 256)))

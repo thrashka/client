@@ -27,6 +27,13 @@ export const makeState: I.RecordFactory<Types._State> = I.Record({
   unreadMap: I.Map(),
 })
 
+export const makeQuoteInfo: I.RecordFactory<Types._QuoteInfo> = I.Record({
+  counter: 0,
+  ordinal: Types.numberToOrdinal(0),
+  sourceConversationIDKey: Types.stringToConversationIDKey(''),
+  targetConversationIDKey: Types.stringToConversationIDKey(''),
+})
+
 export const getMessageOrdinals = (state: TypedState, id: Types.ConversationIDKey) =>
   state.chat2.messageOrdinals.get(id, I.SortedSet())
 export const getMessageMap = (state: TypedState, id: Types.ConversationIDKey) =>

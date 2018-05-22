@@ -152,9 +152,8 @@
     // Start quoting a message / or clear quoting
     "messageSetQuoting": {
       "sourceConversationIDKey": "Types.ConversationIDKey",
-      // Has to be a string because it can be "pending".
-      "targetConversationIDKey": "string",
-      "ordinal": "?Types.Ordinal"
+      "targetConversationIDKey": "Types.ConversationIDKey",
+      "ordinal": "Types.Ordinal"
     },
     // Reply privately to a message with quoting
     "messageReplyPrivately": {

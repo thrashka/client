@@ -26,6 +26,8 @@ protocol local {
   }
   array<AccountAssetLocal> GetAccountAssetsLocal(int sessionID, AccountID accountID);
 
+  void changeWalletAccountNameLocal(int sessionID, AccountID accountID, string newName);
+
   // -------------------------------------------------------
   // CLI protocol
   // -------------------------------------------------------

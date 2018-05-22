@@ -21,10 +21,11 @@ type _editingState = {
   ordinal: Message.Ordinal,
 }
 
-type _quotedOrdConv = {
+type _quoteState = {
   counter: number,
   ordinal: Message.Ordinal,
   sourceConversationIDKey: Common.ConversationIDKey,
+  targetConversationIDKey: Common.ConversationIDKey,
 }
 
 export type _State = {
@@ -36,7 +37,7 @@ export type _State = {
   messageOrdinals: I.Map<Common.ConversationIDKey, I.SortedSet<Message.Ordinal>>, // ordered ordinals in a thread
   metaMap: I.Map<Common.ConversationIDKey, Meta.ConversationMeta>, // metadata about a thread
   explodingModes: I.Map<Common.ConversationIDKey, number>, // seconds to exploding message expiration
-  quotingMap: I.Map<string, _quotedOrdConv>, // current message being quoted
+  quote: ?_quoteState, // current message being quoted
   selectedConversation: Common.ConversationIDKey, // the selected conversation, if any
   typingMap: I.Map<Common.ConversationIDKey, I.Set<string>>, // who's typing currently
   unreadMap: I.Map<Common.ConversationIDKey, number>, // how many unread messages there are

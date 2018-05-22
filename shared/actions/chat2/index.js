@@ -942,7 +942,7 @@ const getIdentifyBehavior = (state: TypedState, conversationIDKey: Types.Convers
 const messageReplyPrivately = (action: Chat2Gen.MessageReplyPrivatelyPayload, state: TypedState) => {
   const {sourceConversationIDKey, ordinal} = action.payload
   const you = state.config.username
-  const message = Constants.getMessageMap(state, sourceConversationIDKey).get(ordinal)
+  const message = Constants.getMessage(state, sourceConversationIDKey, ordinal)
   if (!message) {
     logger.warn("Can't find message to reply to", ordinal)
     return
@@ -970,7 +970,7 @@ const messageReplyPrivately = (action: Chat2Gen.MessageReplyPrivatelyPayload, st
 
 const messageEdit = (action: Chat2Gen.MessageEditPayload, state: TypedState) => {
   const {conversationIDKey, text, ordinal} = action.payload
-  const message = Constants.getMessageMap(state, conversationIDKey).get(ordinal)
+  const message = Constants.getMessage(state, conversationIDKey, ordinal)
   if (!message) {
     logger.warn("Can't find message to edit", ordinal)
     return
@@ -1482,7 +1482,7 @@ function* attachmentDownload(action: Chat2Gen.AttachmentDownloadPayload) {
     return
   }
   const state: TypedState = yield Saga.select()
-  let message = Constants.getMessageMap(state, conversationIDKey).get(ordinal)
+  let message = Constants.getMessage(state, conversationIDKey, ordinal)
 
   if (!message || message.type !== 'attachment') {
     throw new Error('Trying to download missing / incorrect message?')
@@ -1723,7 +1723,7 @@ const markThreadAsRead = (
 const deleteMessageHistory = (action: Chat2Gen.MessageDeletePayload, state: TypedState) => {
   const {conversationIDKey, ordinal} = action.payload
   const meta = Constants.getMeta(state, conversationIDKey)
-  const message = Constants.getMessageMap(state, conversationIDKey).get(ordinal)
+  const message = Constants.getMessage(state, conversationIDKey, ordinal)
   if (!message) {
     throw new Error('Deleting message history with no message?')
   }
@@ -1790,7 +1790,7 @@ const mobileClearSelectedConversation = (_: any, state: TypedState) => {
 function* messageAttachmentNativeShare(action: Chat2Gen.MessageAttachmentNativeSharePayload) {
   const {conversationIDKey, ordinal} = action.payload
   let state: TypedState = yield Saga.select()
-  let message = Constants.getMessageMap(state, conversationIDKey).get(ordinal)
+  let message = Constants.getMessage(state, conversationIDKey, ordinal)
   if (!message || message.type !== 'attachment') {
     throw new Error('Invalid share message')
   }
@@ -1805,7 +1805,7 @@ function* messageAttachmentNativeShare(action: Chat2Gen.MessageAttachmentNativeS
 function* messageAttachmentNativeSave(action: Chat2Gen.MessageAttachmentNativeSavePayload) {
   const {conversationIDKey, ordinal} = action.payload
   let state: TypedState = yield Saga.select()
-  let message = Constants.getMessageMap(state, conversationIDKey).get(ordinal)
+  let message = Constants.getMessage(state, conversationIDKey, ordinal)
   if (!message || message.type !== 'attachment') {
     throw new Error('Invalid share message')
   }
